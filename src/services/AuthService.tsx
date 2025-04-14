@@ -1,4 +1,5 @@
 import { LoginAPI } from "../config/api";
+import axiosInstance from "../config/axios.customize"
 
 type PayloadLogin = {
     email?: string;
@@ -6,12 +7,8 @@ type PayloadLogin = {
 };
 
 const LoginService = (payload: PayloadLogin) => {
-    try {
-        const res = LoginAPI();
-        console.log(res);
-    } catch (error) {
-        console.log(error);
-    }
+    const res = axiosInstance.post('/login');
+    console.log(res);
 }
 
 export { LoginService }
