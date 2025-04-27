@@ -1,18 +1,16 @@
 import Password from "antd/es/input/Password";
 import { LoginAPI } from "../config/api";
 import axiosInstance from "../config/axios.customize"
+import { message } from "antd";
 
 type PayloadLogin = {
     email?: string;
     password?: string;
 };
 
-const LoginService = (payload: PayloadLogin) => {
-    const res = axiosInstance.post('/auth/login', {
-        email: payload.email,
-        password: payload.password
-    });
-    console.log(payload.email, payload.password);
+const LoginService = async (payload: PayloadLogin) => {
+    const res = await LoginAPI(payload.email, payload.password);
+    return res;
 }
 
 export { LoginService }

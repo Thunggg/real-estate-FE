@@ -1,14 +1,48 @@
-import { Button, Checkbox, Form, FormProps, Input } from 'antd';
+import { Button, Form, FormProps, Input, message, notification } from 'antd';
 import { LoginService } from '../services/AuthService';
+import { useNavigate } from 'react-router-dom';
+import { useMessageContext } from '../context/message.context';
+import { useCurrentNotify } from '../context/notifycation.context';
 
 const LoginPage = () => {
+    const navigate = useNavigate();
+    const { messageApi } = useMessageContext();
+    const { notificationApi } = useCurrentNotify()
     type FieldType = {
         email?: string;
         password?: string;
     };
 
-    const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
-        LoginService(values);
+
+    const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
+
+        try {
+            const res = await LoginService(values);
+            console.log(res);
+            if (res.status_code === 200) {
+                messageApi.success({
+                    type: 'success',
+                    content: 'Đăng nhập thành công!',
+                });
+                navigate("/home");
+            } else {
+                notificationApi.error({
+                    message: 'Đăng nhập thất bại',
+                    showProgress: true,
+                    pauseOnHover: false,
+                    description: res.message,
+                    duration: 5,
+                });
+            }
+        } catch (error) {
+            notificationApi.error({
+                message: 'Đăng nhập thất bại',
+                description: 'Đã có lỗi xảy ra!',
+                showProgress: true,
+                pauseOnHover: false,
+                duration: 5,
+            });
+        }
     };
 
     return (
