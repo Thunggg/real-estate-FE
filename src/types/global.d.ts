@@ -14,5 +14,16 @@ declare global {
         access_token: string,
         token_type: string,
         expires_in: number
+        user?: IUser,
+    }
+
+    interface IUser {
+        id: number,
+        name: string,
+        email?: string,
+        image?: string,
+        phone?: string,
+        role: number,
+        address: string
     }
 }

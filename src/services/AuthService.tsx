@@ -1,5 +1,5 @@
 import Password from "antd/es/input/Password";
-import { LoginAPI } from "../config/api";
+import { LoginAPI, LogoutAPI } from "../config/api";
 import axiosInstance from "../config/axios.customize"
 import { message } from "antd";
 
@@ -13,5 +13,18 @@ const LoginService = async (payload: PayloadLogin) => {
     return res;
 }
 
-export { LoginService }
+const LogoutService = async () => {
+    try {
+        const res = await LogoutAPI();
+        // Clear localStorage token regardless of API response
+        localStorage.removeItem("access_token");
+        return res;
+    } catch (error) {
+        // Still clear localStorage token on error
+        localStorage.removeItem("access_token");
+        throw error;
+    }
+}
+
+export { LoginService, LogoutService }
 

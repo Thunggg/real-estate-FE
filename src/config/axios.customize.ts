@@ -5,14 +5,13 @@ const axiosInstance = axios.create({
     headers: {
         "Content-Type": "application/json"
     }
+    ,
+    withCredentials: true,
 });
 
 // // Add a request interceptor
 axiosInstance.interceptors.request.use(function (config) {
-    // Do something before request is sent
-    const token = localStorage.getItem("access_token");
-    const auth = token ? `Bearer ${token}` : '';
-    config.headers['Authorization'] = auth;
+    // Do something before request is sen
 
     return config;
 }, function (error) {

@@ -1,30 +1,38 @@
 import { Button, Form, FormProps, Input, message, notification } from 'antd';
-import { LoginService } from '../services/AuthService';
+import { LoginService } from '../../services/AuthService';
 import { useNavigate } from 'react-router-dom';
-import { useMessageContext } from '../context/message.context';
-import { useCurrentNotify } from '../context/notifycation.context';
+import { useMessageContext } from '../../context/message.context';
+import { useCurrentNotify } from '../../context/notifycation.context';
+import { useState } from 'react';
+import { useCurrentApp } from '../../context/app.context';
+
+type FieldType = {
+    email?: string;
+    password?: string;
+};
 
 const LoginPage = () => {
     const navigate = useNavigate();
     const { messageApi } = useMessageContext();
     const { notificationApi } = useCurrentNotify()
-    type FieldType = {
-        email?: string;
-        password?: string;
-    };
+    const [loading, setLoading] = useState(false);
+
+    const { setUser, setIsAuthenticated } = useCurrentApp();
 
 
     const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
 
         try {
+            setLoading(true);
             const res = await LoginService(values);
-            console.log(res);
             if (res.status_code === 200) {
+                setUser(res.data?.user || null);
+                setIsAuthenticated(true);
                 messageApi.success({
                     type: 'success',
                     content: 'Đăng nhập thành công!',
                 });
-                navigate("/home");
+                navigate("/");
             } else {
                 notificationApi.error({
                     message: 'Đăng nhập thất bại',
@@ -42,6 +50,9 @@ const LoginPage = () => {
                 pauseOnHover: false,
                 duration: 5,
             });
+        }
+        finally {
+            setLoading(false);
         }
     };
 
@@ -82,7 +93,7 @@ const LoginPage = () => {
                             </Form.Item>
 
                             <Form.Item label={null} className='text-center'>
-                                <Button type="primary" htmlType="submit">
+                                <Button type="primary" htmlType="submit" loading={loading}>
                                     Submit
                                 </Button>
                             </Form.Item>
